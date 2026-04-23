@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OSGeo 20th Anniversary — Thanks Map</title>
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <div id="form-container">
+    <div class="wrap">
+
+      <div class="header">
+        <div class="badge">OSGeo 20th Anniversary</div>
+        <a href="https://www.osgeo.org/foundation-news/happy-birthday-osgeo-celebrating-20-years-of-free-and-open-source-software-for-geospatial/"
+           target="_blank" rel="noopener" style="text-decoration:none;">
+          <p class="header-title">Celebrating 20 Years<br>of OSGeo Foundation</p>
+        </a>
+        <p class="header-sub">Drop a pin and leave your message on the map.</p>
+      </div>
+
+      <div class="body">
+        <p class="required-note">* required</p>
+
+        <div class="field">
+          <label>Nickname *</label>
+          <input type="text" id="nickname" placeholder="Your nickname" />
+        </div>
+
+        <div class="field">
+          <label>Country *</label>
+          <select id="country">
+            <option value="">— Select country —</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Favorite FOSS4G Tool</label>
+          <input type="text" id="favorite" placeholder="e.g. MapLibre, QGIS…" />
+        </div>
+
+        <div class="field">
+          <label>Message *</label>
+          <textarea id="comment" placeholder="e.g. Congratulations on OSGeo's 20th anniversary!"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Location *</label>
+          <button class="btn-pick" id="pickBtn">
+            <span id="pickIcon">📍</span>
+            <span id="pickLabel">Pick from map</span>
+          </button>
+          <p class="pick-hint" id="pickHint">Click anywhere on the map to set location</p>
+          <p class="coords-display" id="coordsDisplay"></p>
+          <input type="hidden" id="lng" />
+          <input type="hidden" id="lat" />
+        </div>
+      </div>
+
+      <div class="footer">
+        <p class="notice">⚠️ Your submission will be publicly visible on the map. Please do not include personal information or any content that violates our
+          <a href="https://www.osgeo.org/code_of_conduct/" target="_blank" rel="noopener" style="color:#888;">Code of Conduct</a>.
+        </p>
+        <button class="btn-submit" id="submitBtn">Send Message</button>
+        <div class="status" id="statusMsg"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="config.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
