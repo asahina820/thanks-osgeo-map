@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { CONFIG } from "./config";
 import type { Item, PickedLocation } from "./types";
 import { Form } from "./components/Form";
 import { Button } from "@/components/ui/button";
+import { MapPopup } from "./components/MapPopup";
 
 export function App() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -81,19 +83,24 @@ export function App() {
       if (!feature) return;
       const props = feature.properties as Record<string, string>;
       const coords = (feature.geometry as GeoPoint).coordinates;
-      const favoriteHtml = props.favorite
-        ? `<p class="popup-favorite">${props.favorite}</p>`
-        : "";
-      new maplibregl.Popup({ maxWidth: "280px" })
+
+      const container = document.createElement("div");
+      const root = createRoot(container);
+      root.render(
+        <MapPopup
+          nickname={props.nickname}
+          country={props.country}
+          favorite={props.favorite}
+          comment={props.comment}
+        />
+      );
+
+      const popup = new maplibregl.Popup({ maxWidth: "none", closeButton: false })
         .setLngLat(coords)
-        .setHTML(
-          `<div class="popup-body">
-            <p class="popup-name">${props.nickname} <span class="popup-country">${props.country}</span></p>
-            ${favoriteHtml}
-            <p class="popup-comment">${props.comment}</p>
-          </div>`
-        )
+        .setDOMContent(container)
         .addTo(map);
+
+      popup.on("close", () => root.unmount());
     });
 
     map.on("mouseenter", "items-circles", () => {

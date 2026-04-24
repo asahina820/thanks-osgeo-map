@@ -21,12 +21,8 @@ html, body, #root {
 .map-picking { cursor: crosshair !important; }
 .map-picking .maplibregl-canvas { cursor: crosshair !important; }
 
-/* MapLibre popup — injected outside React tree */
-.popup-body { font-family: Arial, sans-serif; font-size: 13px; line-height: 1.5; color: #333; }
-.popup-name { font-weight: bold; margin: 0 0 2px; }
-.popup-country { font-weight: normal; color: #888; font-size: 11px; margin-left: 4px; }
-.popup-favorite { font-size: 11px; color: #2e7d32; margin: 0 0 4px; }
-.popup-comment { margin: 0; color: #444; }
+/* MapLibre popup — React component rendered via createRoot */
+.maplibregl-popup-content { padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; }
 
 @theme inline {
   --font-heading: var(--font-sans);
