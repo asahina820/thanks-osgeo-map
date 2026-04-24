@@ -71,11 +71,49 @@ export function App() {
       return;
     }
 
-    map.addSource("items", { type: "geojson", data: geojson });
+    map.addSource("items", {
+      type: "geojson",
+      data: geojson,
+      cluster: true,
+      clusterMaxZoom: 14,
+      clusterRadius: 50,
+    });
+
+    // Cluster circles
     map.addLayer({
-      id: "items-circles",
+      id: "items-clusters",
       type: "circle",
       source: "items",
+      filter: ["has", "point_count"],
+      paint: {
+        "circle-color": "#4caf50",
+        "circle-radius": ["step", ["get", "point_count"], 20, 10, 28, 50, 36],
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "#fff",
+        "circle-opacity": 0.85,
+      },
+    });
+
+    // Cluster count labels
+    map.addLayer({
+      id: "items-cluster-count",
+      type: "symbol",
+      source: "items",
+      filter: ["has", "point_count"],
+      layout: {
+        "text-field": "{point_count_abbreviated}",
+        "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+        "text-size": 13,
+      },
+      paint: { "text-color": "#fff" },
+    });
+
+    // Individual points
+    map.addLayer({
+      id: "items-unclustered",
+      type: "circle",
+      source: "items",
+      filter: ["!", ["has", "point_count"]],
       paint: {
         "circle-radius": 8,
         "circle-color": "#4caf50",
@@ -85,7 +123,18 @@ export function App() {
       },
     });
 
-    map.on("click", "items-circles", (e) => {
+    // Click cluster → zoom in
+    map.on("click", "items-clusters", async (e) => {
+      const feature = e.features?.[0];
+      if (!feature) return;
+      const clusterId = feature.properties?.cluster_id as number;
+      const source = map.getSource("items") as maplibregl.GeoJSONSource;
+      const zoom = await source.getClusterExpansionZoom(clusterId);
+      map.easeTo({ center: (feature.geometry as GeoPoint).coordinates, zoom });
+    });
+
+    // Click individual point → popup
+    map.on("click", "items-unclustered", (e) => {
       if (pickingLocationRef.current) return;
       const feature = e.features?.[0];
       if (!feature) return;
@@ -103,10 +152,7 @@ export function App() {
         />,
       );
 
-      const popup = new maplibregl.Popup({
-        maxWidth: "none",
-        closeButton: false,
-      })
+      const popup = new maplibregl.Popup({ maxWidth: "none", closeButton: false })
         .setLngLat(coords)
         .setDOMContent(container)
         .addTo(map);
@@ -114,10 +160,16 @@ export function App() {
       popup.on("close", () => root.unmount());
     });
 
-    map.on("mouseenter", "items-circles", () => {
+    map.on("mouseenter", "items-clusters", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", "items-clusters", () => {
+      map.getCanvas().style.cursor = "";
+    });
+    map.on("mouseenter", "items-unclustered", () => {
       if (!pickingLocationRef.current) map.getCanvas().style.cursor = "pointer";
     });
-    map.on("mouseleave", "items-circles", () => {
+    map.on("mouseleave", "items-unclustered", () => {
       if (!pickingLocationRef.current) map.getCanvas().style.cursor = "";
     });
   }, []);
