@@ -23,6 +23,7 @@ type Props = {
   pickingLocation: boolean;
   pickedLocation: PickedLocation | null;
   onTogglePick: () => void;
+  onClearLocation: () => void;
   onSubmitSuccess: () => void;
   isOpen: boolean;
   onClose: () => void;
@@ -33,7 +34,7 @@ type Status = { type: "success" | "error"; message: string } | null;
 const labelClass = "text-[10px] font-bold tracking-[0.06em] uppercase text-[#666]";
 const fieldClass = "h-9 bg-white border-[#ccc] text-[13px] placeholder:text-[#999] placeholder:italic focus-visible:border-green-500 focus-visible:ring-green-500/30";
 
-export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSuccess, isOpen, onClose }: Props) {
+export function Form({ pickingLocation, pickedLocation, onTogglePick, onClearLocation, onSubmitSuccess, isOpen, onClose }: Props) {
   const [nickname, setNickname] = useState("");
   const [country, setCountry] = useState("");
   const [favorite, setFavorite] = useState("");
@@ -86,6 +87,11 @@ export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSu
       if (itemId) {
         await fetch(`${CONFIG.backendUrl}/items/${itemId}/publish`, { method: "POST" });
       }
+      setNickname("");
+      setCountry("");
+      setFavorite("");
+      setComment("");
+      onClearLocation();
       setStatus({ type: "success", message: "Your message has been added to the map!" });
       onSubmitSuccess();
     } catch (e) {

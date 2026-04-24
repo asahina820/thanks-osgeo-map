@@ -278,6 +278,7 @@ export function App() {
         pickingLocation={pickingLocation}
         pickedLocation={pickedLocation}
         onTogglePick={() => setPickingLocation((prev) => !prev)}
+        onClearLocation={() => setPickedLocation(null)}
         onSubmitSuccess={loadItemsLayer}
         isOpen={formOpen}
         onClose={() => setFormOpen(false)}
