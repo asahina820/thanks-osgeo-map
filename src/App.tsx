@@ -8,6 +8,7 @@ import { Form } from "./components/Form";
 import { Button } from "@/components/ui/button";
 import { MapPopup } from "./components/MapPopup";
 import { MapInfo } from "./components/MapInfo";
+import { StatsDialog } from "./components/StatsDialog";
 
 export function App() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -282,6 +283,7 @@ export function App() {
         onClose={() => setFormOpen(false)}
       />
       <MapInfo />
+      <StatsDialog />
       {/* FAB: mobile only */}
       {!formOpen && (
         <Button
