@@ -7,6 +7,7 @@ import type { Item, PickedLocation } from "./types";
 import { Form } from "./components/Form";
 import { Button } from "@/components/ui/button";
 import { MapPopup } from "./components/MapPopup";
+import { MapInfo } from "./components/MapInfo";
 
 export function App() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -197,6 +198,7 @@ export function App() {
         isOpen={formOpen}
         onClose={() => setFormOpen(false)}
       />
+      <MapInfo />
       {/* FAB: mobile only */}
       {!formOpen && (
         <Button
