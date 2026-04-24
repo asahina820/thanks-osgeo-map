@@ -10,7 +10,7 @@ export function MapInfo() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        className="absolute bottom-36 right-2.5 z-10 size-7.25 rounded-sm bg-white border border-white/60 shadow-md text-[#333] flex items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer"
+        className="absolute bottom-48 right-2.5 z-10 size-7.25 rounded-sm bg-white border border-white/60 shadow-md text-[#333] flex items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer"
         aria-label="About this map"
         title="Repository"
       >

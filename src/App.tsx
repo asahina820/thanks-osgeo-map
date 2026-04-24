@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import maplibregl from "maplibre-gl";
+import maplibregl, { GlobeControl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { CONFIG } from "./config";
 import type { Item, PickedLocation } from "./types";
@@ -14,7 +14,9 @@ export function App() {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [pickingLocation, setPickingLocation] = useState(false);
   const pickingLocationRef = useRef(false);
-  const [pickedLocation, setPickedLocation] = useState<PickedLocation | null>(null);
+  const [pickedLocation, setPickedLocation] = useState<PickedLocation | null>(
+    null,
+  );
   const [formOpen, setFormOpen] = useState(false);
 
   useEffect(() => {
@@ -39,7 +41,9 @@ export function App() {
 
     const features = items
       .map((item) => {
-        const fields = Object.fromEntries(item.fields.map((f) => [f.key, f.value]));
+        const fields = Object.fromEntries(
+          item.fields.map((f) => [f.key, f.value]),
+        );
         const raw = fields["location"];
         const location: GeoPoint | null =
           typeof raw === "string" ? JSON.parse(raw) : (raw as GeoPoint | null);
@@ -57,7 +61,10 @@ export function App() {
       })
       .filter((f): f is NonNullable<typeof f> => f !== null);
 
-    const geojson: GeoJSON.FeatureCollection = { type: "FeatureCollection", features };
+    const geojson: GeoJSON.FeatureCollection = {
+      type: "FeatureCollection",
+      features,
+    };
 
     if (map.getSource("items")) {
       (map.getSource("items") as maplibregl.GeoJSONSource).setData(geojson);
@@ -93,10 +100,13 @@ export function App() {
           country={props.country}
           favorite={props.favorite}
           comment={props.comment}
-        />
+        />,
       );
 
-      const popup = new maplibregl.Popup({ maxWidth: "none", closeButton: false })
+      const popup = new maplibregl.Popup({
+        maxWidth: "none",
+        closeButton: false,
+      })
         .setLngLat(coords)
         .setDOMContent(container)
         .addTo(map);
@@ -118,12 +128,30 @@ export function App() {
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: "https://tile.openstreetmap.jp/styles/maptiler-basic-en/style.json",
+      style:
+        "https://tile.openstreetmap.jp/styles/maptiler-basic-en/style.json",
       center: [137, 37],
       zoom: 2,
     });
     map.addControl(new maplibregl.NavigationControl(), "bottom-right");
-    map.on("load", loadItemsLayer);
+    map.addControl(new GlobeControl(), "bottom-right");
+    map.on("load", () => {
+      map.setSky({
+        "sky-color": "#0d1b3e",
+        "sky-horizon-blend": 0.5,
+        "horizon-color": "#0d1b3e",
+        "horizon-fog-blend": 0.2,
+        "atmosphere-blend": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0, 1,
+          5, 1,
+          7, 0,
+        ],
+      });
+      loadItemsLayer();
+    });
     mapRef.current = map;
 
     return () => {
@@ -157,7 +185,10 @@ export function App() {
       features: [
         {
           type: "Feature",
-          geometry: { type: "Point", coordinates: [pickedLocation.lng, pickedLocation.lat] },
+          geometry: {
+            type: "Point",
+            coordinates: [pickedLocation.lng, pickedLocation.lat],
+          },
           properties: {},
         },
       ],
@@ -187,7 +218,7 @@ export function App() {
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <div
         ref={mapContainerRef}
-        style={{ position: "absolute", inset: 0 }}
+        style={{ position: "absolute", inset: 0, backgroundColor: "#0d1b3e" }}
         className={pickingLocation ? "map-picking" : undefined}
       />
       <Form
