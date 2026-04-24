@@ -81,7 +81,11 @@ export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSu
         }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-      await res.json();
+      const json = (await res.json()) as { data?: { id?: string } };
+      const itemId = json.data?.id;
+      if (itemId) {
+        await fetch(`${CONFIG.backendUrl}/items/${itemId}/publish`, { method: "POST" });
+      }
       setStatus({ type: "success", message: "Your message has been added to the map!" });
       onSubmitSuccess();
     } catch (e) {
