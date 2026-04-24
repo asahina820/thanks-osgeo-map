@@ -11,6 +11,7 @@ export function App() {
   const [pickingLocation, setPickingLocation] = useState(false);
   const pickingLocationRef = useRef(false);
   const [pickedLocation, setPickedLocation] = useState<PickedLocation | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
 
   useEffect(() => {
     pickingLocationRef.current = pickingLocation;
@@ -185,7 +186,19 @@ export function App() {
         pickedLocation={pickedLocation}
         onTogglePick={() => setPickingLocation((prev) => !prev)}
         onSubmitSuccess={loadItemsLayer}
+        isOpen={formOpen}
+        onClose={() => setFormOpen(false)}
       />
+      {/* FAB: mobile only */}
+      {!formOpen && (
+        <button
+          className="flex sm:hidden items-center justify-center absolute bottom-6 right-4 z-10 w-14 h-14 rounded-full bg-[#1a1a2e] text-[22px] shadow-lg border-none cursor-pointer"
+          onClick={() => setFormOpen(true)}
+          aria-label="Open form"
+        >
+          ✏️
+        </button>
+      )}
     </div>
   );
 }
