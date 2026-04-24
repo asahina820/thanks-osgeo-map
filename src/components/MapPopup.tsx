@@ -38,7 +38,7 @@ export function MapPopup({ nickname, country, favorite, comment }: Props) {
         {favorite && (
           <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-700 text-[11px] font-medium rounded-md px-2 py-1">
             <span>⭐</span>
-            <span className="truncate">{favorite}</span>
+            <span className="wrap-break-word min-w-0">{favorite}</span>
           </div>
         )}
       </CardHeader>
