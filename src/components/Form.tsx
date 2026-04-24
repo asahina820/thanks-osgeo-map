@@ -1,6 +1,23 @@
 import { useEffect, useState } from "react";
 import { CONFIG } from "../config";
 import type { PickedLocation } from "../types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 
 type Props = {
   pickingLocation: boolean;
@@ -14,8 +31,7 @@ type Props = {
 type Status = { type: "success" | "error"; message: string } | null;
 
 const labelClass = "text-[10px] font-bold tracking-[0.06em] uppercase text-[#666]";
-const inputClass =
-  "w-full px-[10px] py-2 border border-[#ccc] rounded bg-white text-[#333] text-[13px] outline-none transition-colors focus:border-green-500 placeholder:text-[#999] placeholder:italic";
+const fieldClass = "h-9 bg-white border-[#ccc] text-[13px] placeholder:text-[#999] placeholder:italic focus-visible:border-green-500 focus-visible:ring-green-500/30";
 
 export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSuccess, isOpen, onClose }: Props) {
   const [nickname, setNickname] = useState("");
@@ -86,18 +102,15 @@ export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSu
   return (
     <div
       className={[
-        // Mobile: bottom sheet
         "fixed bottom-0 left-0 right-0 z-10 max-h-[85vh] overflow-y-auto rounded-t-2xl [scrollbar-width:thin]",
         "shadow-[0_-4px_24px_rgba(0,0,0,0.2)] transition-transform duration-300",
-        // Desktop: top-left overlay (always visible)
-        "sm:absolute sm:top-5 sm:left-5 sm:bottom-auto sm:right-auto",
-        "sm:max-h-[calc(100vh-40px)] sm:rounded-xl sm:shadow-[0_4px_24px_rgba(0,0,0,0.35)]",
+        "sm:absolute sm:top-5 sm:left-5 sm:bottom-auto sm:right-auto sm:w-100",
+        "sm:max-h-[calc(100vh-40px)] sm:overflow-y-auto sm:rounded-xl sm:shadow-[0_4px_24px_rgba(0,0,0,0.35)]",
         "sm:translate-y-0 sm:transition-none",
-        // Mobile open/close
         isOpen ? "translate-y-0" : "translate-y-full",
       ].join(" ")}
     >
-      {/* Mobile handle — tap to close */}
+      {/* Mobile handle */}
       <div
         className="flex sm:hidden justify-center items-center py-2.5 bg-[#1a1a2e] rounded-t-2xl cursor-pointer"
         onClick={onClose}
@@ -105,11 +118,11 @@ export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSu
         <div className="w-10 h-1 rounded-full bg-white/35" />
       </div>
 
-      <div className="w-full sm:w-[400px] flex flex-col overflow-hidden">
+      <Card className="w-full rounded-none sm:rounded-xl gap-0 py-0 ring-0">
 
         {/* Header */}
-        <div className="bg-[#1a1a2e] text-white px-4 pt-[14px] pb-3">
-          <span className="inline-block text-[10px] font-bold tracking-widest uppercase bg-green-500/25 text-green-300 border border-green-500/45 rounded-full px-2 py-0.5 mb-2">
+        <CardHeader className="bg-[#1a1a2e] text-white px-4 pt-3.5 pb-3 gap-1 rounded-none">
+          <span className="inline-block text-[10px] font-bold tracking-widest uppercase bg-green-500/25 text-green-300 border border-green-500/45 rounded-full px-2 py-0.5 w-fit">
             OSGeo 20th Anniversary
           </span>
           <a
@@ -118,86 +131,86 @@ export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSu
             rel="noopener"
             className="no-underline"
           >
-            <p className="text-base font-bold leading-snug mb-1 text-white">
+            <div className="text-base font-bold leading-snug text-white">
               Celebrating 20 Years<br />of OSGeo Foundation
-            </p>
+            </div>
           </a>
-          <p className="text-[11px] text-white/50">Drop a pin and leave your message on the map.</p>
-        </div>
+          <div className="text-[11px] text-white/50">Drop a pin and leave your message on the map.</div>
+        </CardHeader>
 
         {/* Body */}
-        <div className="px-4 py-[14px] flex flex-col gap-3 bg-[#eee]">
+        <CardContent className="px-4 py-3.5 flex flex-col gap-3 bg-[#eee]">
           <p className="text-[10px] text-[#999] text-right -mt-1">* required</p>
 
-          <div className="flex flex-col gap-1">
-            <label className={labelClass}>Nickname *</label>
-            <input
-              type="text"
-              className={inputClass}
+          <div className="flex flex-col gap-1.5">
+            <Label className={labelClass}>Nickname *</Label>
+            <Input
               placeholder="Your nickname"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
+              className={fieldClass}
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className={labelClass}>Country *</label>
-            <select
-              className={`${inputClass} select-arrow cursor-pointer appearance-none disabled:text-[#999] disabled:italic`}
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              disabled={loadingCountries}
-            >
-              {loadingCountries ? (
-                <option value="">Loading…</option>
-              ) : countries.length === 0 ? (
-                <option value="">Failed to load — refresh to retry</option>
-              ) : (
-                <>
-                  <option value="">— Select country —</option>
-                  {countries.map((name) => (
-                    <option key={name} value={name}>{name}</option>
-                  ))}
-                </>
-              )}
-            </select>
+          <div className="flex flex-col gap-1.5">
+            <Label className={labelClass}>Country *</Label>
+            <Select value={country} onValueChange={(v) => setCountry(v ?? "")} disabled={loadingCountries}>
+              <SelectTrigger className={`${fieldClass} w-full`}>
+                <SelectValue
+                  placeholder={
+                    loadingCountries
+                      ? "Loading…"
+                      : countries.length === 0
+                      ? "Failed to load — refresh to retry"
+                      : "— Select country —"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map((name) => (
+                  <SelectItem key={name} value={name}>
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className={labelClass}>Favorite FOSS4G Tool</label>
-            <input
-              type="text"
-              className={inputClass}
+          <div className="flex flex-col gap-1.5">
+            <Label className={labelClass}>Favorite FOSS4G Tool</Label>
+            <Input
               placeholder="e.g. MapLibre, QGIS…"
               value={favorite}
               onChange={(e) => setFavorite(e.target.value)}
+              className={fieldClass}
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className={labelClass}>Message *</label>
-            <textarea
-              className={`${inputClass} resize-y min-h-[68px] leading-relaxed`}
+          <div className="flex flex-col gap-1.5">
+            <Label className={labelClass}>Message *</Label>
+            <Textarea
               placeholder="e.g. Congratulations on OSGeo's 20th anniversary!"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
+              className={`${fieldClass} h-auto min-h-[68px] resize-y leading-relaxed`}
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className={labelClass}>Location *</label>
-            <button
-              className={[
-                "w-full px-[10px] py-2 rounded border border-dashed border-[#aaa] bg-white text-[#555] text-xs font-bold",
-                "flex items-center justify-center gap-1.5 transition-all",
-                "hover:bg-[#f0f0f0] hover:border-[#888]",
-                pickingLocation ? "!bg-green-500/10 !border-green-500 !text-green-800 animate-pulse" : "",
-              ].join(" ")}
+          <div className="flex flex-col gap-1.5">
+            <Label className={labelClass}>Location *</Label>
+            <Button
+              variant="outline"
               onClick={onTogglePick}
+              className={[
+                "w-full h-9 border-dashed border-[#aaa] bg-white text-[#555] text-xs font-bold gap-1.5",
+                pickingLocation
+                  ? "!bg-green-500/10 !border-green-500 !text-green-800 animate-pulse"
+                  : "hover:bg-[#f0f0f0] hover:border-[#888]",
+              ].join(" ")}
             >
               <span>{pickIcon}</span>
               <span>{pickLabel}</span>
-            </button>
+            </Button>
             {pickingLocation && (
               <p className="text-[11px] text-green-800 text-center mt-1">
                 Click anywhere on the map to set location
@@ -209,10 +222,10 @@ export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSu
               </p>
             )}
           </div>
-        </div>
+        </CardContent>
 
         {/* Footer */}
-        <div className="px-4 pt-3 pb-[14px] flex flex-col gap-2 bg-[#eee] border-t border-[#ccc]">
+        <CardFooter className="px-4 pt-3 pb-3.5 flex flex-col gap-2 bg-[#eee] rounded-none items-stretch">
           <p className="text-[11px] text-[#888] leading-relaxed bg-white border-l-[3px] border-yellow-400 rounded px-[10px] py-2">
             ⚠️ Your submission will be publicly visible on the map. Please do not include personal
             information or any content that violates our{" "}
@@ -226,13 +239,13 @@ export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSu
             </a>
             .
           </p>
-          <button
-            className="w-full py-2.5 rounded bg-green-500 text-white text-sm font-bold transition-all hover:bg-green-600 active:scale-[0.98] active:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed"
+          <Button
+            className="w-full h-10 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white text-sm font-bold"
             onClick={handleSubmit}
             disabled={submitting}
           >
             {submitting ? "Sending…" : "Send Message"}
-          </button>
+          </Button>
           {status && (
             <div
               className={[
@@ -245,8 +258,9 @@ export function Form({ pickingLocation, pickedLocation, onTogglePick, onSubmitSu
               {status.message}
             </div>
           )}
-        </div>
-      </div>
+        </CardFooter>
+
+      </Card>
     </div>
   );
 }

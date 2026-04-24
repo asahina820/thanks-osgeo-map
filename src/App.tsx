@@ -4,6 +4,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { CONFIG } from "./config";
 import type { Item, PickedLocation } from "./types";
 import { Form } from "./components/Form";
+import { Button } from "@/components/ui/button";
 
 export function App() {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -191,13 +192,13 @@ export function App() {
       />
       {/* FAB: mobile only */}
       {!formOpen && (
-        <button
-          className="flex sm:hidden items-center justify-center absolute bottom-6 right-4 z-10 w-14 h-14 rounded-full bg-[#1a1a2e] text-[22px] shadow-lg border-none cursor-pointer"
+        <Button
+          className="flex sm:hidden items-center justify-center absolute bottom-6 right-4 z-10 w-14 h-14 rounded-full bg-[#1a1a2e] text-[22px] shadow-lg"
           onClick={() => setFormOpen(true)}
           aria-label="Open form"
         >
           ✏️
-        </button>
+        </Button>
       )}
     </div>
   );
